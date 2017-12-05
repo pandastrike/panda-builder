@@ -1,0 +1,32 @@
+{
+  "name": "fairmont-build-tools",
+  "version": "1.0.0",
+  "description": "Packages shared tooling for building fairmont packages",
+  "main": "lib/index.js",
+  "scripts": {
+    "compile": "gulp compile",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pandastrike/fairmont-build-tools.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pandastrike/fairmont-build-tools/issues"
+  },
+  "homepage": "https://github.com/pandastrike/fairmont-build-tools#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "coffeescript": "^2.0.3",
+    "del": "^3.0.0",
+    "gulp": "github:gulpjs/gulp#4.0",
+    "gulp-coffee": "^2.3.5",
+    "gulp-pug": "^3.3.0",
+    "gulp-stylus": "^2.6.0",
+    "gulp-webserver": "^0.9.1"
+  }
+}
