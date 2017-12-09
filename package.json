@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "Shared tooling for building fairmont packages",
   "files": [
-    "build/npm",
-    "README.md"
+    "build/npm"
   ],
   "main": "build/npm/lib/index.js",
   "scripts": {
