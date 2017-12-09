@@ -83,7 +83,7 @@ module.exports = (gulp) ->
         task "npm:test", series "npm:build", "npm:run:tests"
 
         task "npm:publish",
-          serial (-> print await run "npm publish"),
+          series (-> print await run "npm publish"),
             "git:tag"
 
       esm: ->

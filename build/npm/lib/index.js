@@ -94,9 +94,9 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             return print((yield run("node build/npm/test/index.js")));
           }));
           task("npm:test", series("npm:build", "npm:run:tests"));
-          return task("npm:publish", _asyncToGenerator(function* () {
+          return task("npm:publish", series(_asyncToGenerator(function* () {
             return print((yield run("npm publish")));
-          }));
+          }), "git:tag"));
         },
         esm: function () {
           task("esm:build", function () {});
