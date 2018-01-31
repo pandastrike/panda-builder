@@ -79,7 +79,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
               }
             };
             task("npm:compile:source", compile({
-              source: "lib/**/*.coffee",
+              source: "src/**/*.coffee",
               target: "build/npm/lib",
               settings: settings
             }));

@@ -63,7 +63,7 @@ module.exports = (gulp) ->
 
           task "npm:compile:source",
             compile
-              source: "lib/**/*.coffee"
+              source: "src/**/*.coffee"
               target: "build/npm/lib"
               settings: settings
 
