@@ -1,6 +1,6 @@
 {
   "name": "fairmont-build-tools",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm"
