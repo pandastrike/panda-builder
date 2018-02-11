@@ -7,7 +7,9 @@
   ],
   "main": "build/npm/src/index.js",
   "scripts": {
-    "test": "gulp test"
+    "test": "gulp npm:test",
+    "publish": "gulp npm:publish",
+    "tag": "gulp git:tag"
   },
   "repository": {
     "type": "git",
