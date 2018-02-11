@@ -1,25 +1,25 @@
 {
   "name": "panda-builder",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm"
   ],
-  "main": "build/npm/lib/index.js",
+  "main": "build/npm/src/index.js",
   "scripts": {
     "test": "gulp test"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pandastrike/fairmont-build-tools.git"
+    "url": "git+https://github.com/pandastrike/panda-builder.git"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pandastrike/fairmont-build-tools/issues"
+    "url": "https://github.com/pandastrike/panda-builder/issues"
   },
-  "homepage": "https://github.com/pandastrike/fairmont-build-tools#readme",
+  "homepage": "https://github.com/pandastrike/panda-builder#readme",
   "dependencies": {
     "babel-core": "^6.26.0",
     "babel-preset-env": "^1.6.1",
