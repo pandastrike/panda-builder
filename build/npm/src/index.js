@@ -80,7 +80,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
             };
             task("npm:compile:source", compile({
               source: "src/**/*.coffee",
-              target: "build/npm/lib",
+              target: "build/npm/src",
               settings: settings
             }));
             return task("npm:compile:tests", compile({
@@ -96,7 +96,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
           task("npm:test", series("npm:build", "npm:run:tests"));
           return task("npm:publish", series(_asyncToGenerator(function* () {
             return print((yield run("npm publish")));
-          }), "git:tag"));
+          })));
         },
         esm: function () {
           task("esm:build", function () {});

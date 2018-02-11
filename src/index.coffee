@@ -64,7 +64,7 @@ module.exports = (gulp) ->
           task "npm:compile:source",
             compile
               source: "src/**/*.coffee"
-              target: "build/npm/lib"
+              target: "build/npm/src"
               settings: settings
 
           task "npm:compile:tests",
@@ -83,8 +83,7 @@ module.exports = (gulp) ->
         task "npm:test", series "npm:build", "npm:run:tests"
 
         task "npm:publish",
-          series (-> print await run "npm publish"),
-            "git:tag"
+          series (-> print await run "npm publish")
 
       esm: ->
 
