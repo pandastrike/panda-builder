@@ -5,6 +5,9 @@
   "files": [
     "build/npm"
   ],
+  "bin": {
+    "panda-builder-init": "./bin/init"
+  },
   "main": "build/npm/src/index.js",
   "scripts": {
     "test": "gulp npm:test",
@@ -27,6 +30,7 @@
     "babel-preset-env": "^1.6.1",
     "babel-preset-power-assert": "^1.0.0",
     "coffeescript": "^2.0.3",
+    "colors": "^1.2.1",
     "del": "^3.0.0",
     "gulp": "github:gulpjs/gulp#4.0",
     "gulp-coffee": "^2.3.5"

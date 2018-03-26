@@ -2,6 +2,8 @@ del = require "del"
 coffeescript = require "coffeescript"
 coffee = require "gulp-coffee"
 
+{print, run} = require "./run"
+
 module.exports = (gulp) ->
 
   {task, series, parallel, src, dest} = gulp
@@ -10,22 +12,6 @@ module.exports = (gulp) ->
   module = do ->
     fs = require "fs"
     JSON.parse fs.readFileSync "package.json"
-
-  # Helper to run external programs
-  run = do ->
-    {exec} = require('child_process')
-    (command) ->
-      new Promise (yay, nay) ->
-        exec command, (error, stdout, stderr) ->
-          if !error?
-            yay [stdout, stderr]
-          else
-            nay error
-
-  # print output
-  print = ([stdout, stderr]) ->
-    process.stdout.write stdout if stdout.length > 0
-    process.stderr.write stderr if stderr.length > 0
 
   # Compile helper, taking target configuration
   # (target in configuration refers to output path)
@@ -58,7 +44,10 @@ module.exports = (gulp) ->
                   resolve "babel-preset-env"
                   targets: node: "6.10"
                 ]
-                resolve "babel-preset-power-assert"
+                # TODO: find a way to make this dynamic
+                # that is, turn on/off, possibly based
+                # on whether it's installed...
+                # resolve "babel-preset-power-assert"
               ]
 
           task "npm:compile:source",

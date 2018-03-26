@@ -3,7 +3,7 @@
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
 
 (function () {
-  var coffee, coffeescript, del;
+  var coffee, coffeescript, del, print, run;
 
   del = require("del");
 
@@ -11,8 +11,10 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
 
   coffee = require("gulp-coffee");
 
+  ({ print, run } = require("./run"));
+
   module.exports = function (gulp) {
-    var compile, dest, module, parallel, print, run, series, src, target, targets, task;
+    var compile, dest, module, parallel, series, src, target, targets, task;
     ({ task, series, parallel, src, dest } = gulp);
     // package.json object
     module = function () {
@@ -20,31 +22,6 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
       fs = require("fs");
       return JSON.parse(fs.readFileSync("package.json"));
     }();
-    // Helper to run external programs
-    run = function () {
-      var exec;
-      ({ exec } = require('child_process'));
-      return function (command) {
-        return new Promise(function (yay, nay) {
-          return exec(command, function (error, stdout, stderr) {
-            if (error == null) {
-              return yay([stdout, stderr]);
-            } else {
-              return nay(error);
-            }
-          });
-        });
-      };
-    }();
-    // print output
-    print = function ([stdout, stderr]) {
-      if (stdout.length > 0) {
-        process.stdout.write(stdout);
-      }
-      if (stderr.length > 0) {
-        return process.stderr.write(stderr);
-      }
-    };
     // Compile helper, taking target configuration
     // (target in configuration refers to output path)
     compile = function ({ source, target, settings }) {
@@ -75,9 +52,13 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
                   targets: {
                     node: "6.10"
                   }
-                }], resolve("babel-preset-power-assert")]
+                }]]
               }
             };
+            // TODO: find a way to make this dynamic
+            // that is, turn on/off, possibly based
+            // on whether it's installed...
+            // resolve "babel-preset-power-assert"
             task("npm:compile:source", compile({
               source: "src/**/*.coffee",
               target: "build/npm/src",
