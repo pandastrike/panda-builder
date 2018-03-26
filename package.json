@@ -1,10 +1,11 @@
 {
   "name": "panda-builder",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm",
-    "bin/init"
+    "bin/init",
+    "template"
   ],
   "bin": {
     "panda-builder-init": "./bin/init"
