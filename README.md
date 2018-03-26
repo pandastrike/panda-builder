@@ -1,8 +1,17 @@
-# Build Tools
+# Panda Builder
 
-Shared tooling for building Fairmont packages, among others.
+Shared tooling for building packages, among others.
 
-# Usage
+## Conventions
+
+- Source code is in `src` (not `lib`)
+- Tests are in `test`
+- Build artifacts are in `build`
+- Build artifacts are checked in to git
+- Build targets have their own subdirectories, ex: `build/npm`
+- Each release is tagged
+
+## Usage
 
 ```
 tools = require "fairmont-build-tools"
@@ -19,11 +28,11 @@ This will get you the tasks associated with the `npm` target preset. This includ
 
 - `npm publish` — Publishes to NPM.
 
-# Presets
+## Presets
 
 The only meaningful preset at this time `npm`. Presets `esm` and `www` are reserved. Don't use these as tasks prefixes.
 
-# Built-In Tasks
+## Built-In Tasks
 
 The tasks `build`, `test`, and `publish` are all defined to iterate on active targets (any targets for which tasks have been defined) and execute the corresponding tasks, ex: `npm:build`.
 
@@ -33,10 +42,23 @@ In addition, these tasks are also defined:
 
 - `clean` — Deletes the entire `build` directory. Since each target defines it's own clean task (which should delete the target directory), you shouldn't need this.
 
-# Configuring `package.json`
+## Configuring `package.json`
 
-Remember, the files you're publishing will be in `build/npm`. The `files`, `directories`, and `main` properties should reflect this. Define `test` to be `gulp test`.
+The files you're publishing will be in `build/npm`. The `files`, `directories`, and `main` properties should reflect this. Define `test` to be `gulp test`.
 
-# Watching Files
+## Initializing Projects
+
+You can automatically set up your project to use Panda Builder.
+
+```
+npm i -D panda-builder
+npx panda-builder-init
+```
+
+This will set up a LICENSE file, a template README, `src` and `test` directories, the Gulpfiles you'll need to import Builder's Gulp tasks, install the necessary dependencies, and update `package.json` accordingly.
+
+`panda-builder-init` will not overwrite files that are already there, but will overwrite `package.json` entries for `main`,  `license`, and the `test` script.
+
+## Watching Files
 
 Coming soon.
