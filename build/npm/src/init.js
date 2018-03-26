@@ -44,6 +44,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     (function () {
       var pkg;
       pkg = JSON.parse(readFileSync("package.json", "utf8"));
+      pkg.main = "build/npm/src/index.js";
       pkg.license = "MIT";
       pkg.scripts.test = "gulp npm:test";
       return writeFileSync("package.json", JSON.stringify(pkg, null, 2));
