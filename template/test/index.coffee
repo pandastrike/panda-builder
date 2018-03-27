@@ -1,7 +1,6 @@
 import assert from "assert"
 import CSS from "../src"
 import {print, test} from "amen"
-{s, p, render, rem, pct, scale} = CSS
 
 do ->
 
