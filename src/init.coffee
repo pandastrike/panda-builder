@@ -14,7 +14,8 @@ do ->
 
   # add slash to tell rsync to sync contents
   commands = {
-    sync: "rsync -ru #{source}/ #{target}"
+    sync: "rsync -ru #{source}/ #{target} &&
+      mv #{target}/gitignore #{target}/.gitignore"
     deps: "npm i -D github:gulpjs/gulp#4.0 coffeescript amen"
   }
 

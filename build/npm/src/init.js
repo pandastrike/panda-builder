@@ -24,7 +24,7 @@ function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, a
     target = resolve(".");
     // add slash to tell rsync to sync contents
     commands = {
-      sync: `rsync -ru ${source}/ ${target}`,
+      sync: `rsync -ru ${source}/ ${target} && mv ${target}/gitignore ${target}/.gitignore`,
       deps: "npm i -D github:gulpjs/gulp#4.0 coffeescript amen"
     };
     messages = {
