@@ -1,7 +1,6 @@
 del = require "del"
-coffeescript = require "coffeescript"
-coffee = require "gulp-coffee"
-
+{coffee, extension} = require "./plugins"
+{resolve} = require "./helpers"
 {print, run} = require "./run"
 
 module.exports = (gulp) ->
@@ -17,8 +16,9 @@ module.exports = (gulp) ->
   # (target in configuration refers to output path)
   compile = ({source, target, settings}) ->
     ->
-      src source, sourcemaps: true
+      src source
       .pipe coffee settings
+      .pipe extension ".js"
       .pipe dest target
 
   targets =
@@ -33,22 +33,13 @@ module.exports = (gulp) ->
 
         do ->
 
-          resolve = (path) ->
-            require.resolve path, paths: [ __dirname ]
-
+          # override defaults to support AWS Lambda
           settings =
-            coffee: coffeescript
             transpile:
-              presets: [
-                [
-                  resolve "babel-preset-env"
-                  targets: node: "6.10"
-                ]
-                # TODO: find a way to make this dynamic
-                # that is, turn on/off, possibly based
-                # on whether it's installed...
-                # resolve "babel-preset-power-assert"
-              ]
+              presets: [[
+                resolve "babel-preset-env"
+                targets: node: "8.10"
+              ]]
 
           task "npm:compile:source",
             compile
