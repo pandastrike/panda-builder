@@ -14,3 +14,5 @@ node_modules/
 .node_repl_history
 
 *.tgz
+
+.DS_Store

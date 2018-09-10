@@ -40,6 +40,9 @@ module.exports = (gulp) ->
                 resolve "babel-preset-env"
                 targets: node: "8.10"
               ]]
+              plugins: [
+                resolve "babel-plugin-transform-async-generator-functions"
+              ]
 
           task "npm:compile:source",
             compile
