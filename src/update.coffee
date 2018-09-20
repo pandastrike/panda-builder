@@ -5,7 +5,8 @@ require "colors"
 do ->
 
   commands = {
-    install: -> run "npm i -D @babel/core @babel/preset-env"
+    install: -> run "npm rm -D babel-core babel-preset-env &&
+      npm i -D @babel/core @babel/preset-env"
     rebuild: -> run "npm test"
     bump: -> run "npm version patch --no-git-tag-version"
     commit: -> run "git commit package.json package-lock.json
@@ -17,7 +18,7 @@ do ->
 
   messages = {
     start: "Starting update...".blue
-    install: "Installing update...".green
+    install: "Updating dependencies...".green
     rebuild: "Building and verifying...".green
     bump: "Bumping patch version...".green
     commit: "Comitting changes...".green
