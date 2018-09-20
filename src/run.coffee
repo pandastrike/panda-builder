@@ -14,4 +14,7 @@ print = ([stdout, stderr]) ->
   process.stdout.write stdout if stdout.length > 0
   process.stderr.write stderr if stderr.length > 0
 
-module.exports = {run, print}
+log = (message) -> console.error message
+
+
+module.exports = {run, print, log}

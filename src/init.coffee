@@ -1,9 +1,7 @@
 {resolve} = require "path"
 {readFileSync, writeFileSync} = require "fs"
 require "colors"
-{run, print} = require "./run"
-
-log = (message) -> console.error message
+{run, print, log} = require "./run"
 
 do ->
 
