@@ -37,12 +37,12 @@ module.exports = (gulp) ->
           settings =
             transpile:
               presets: [[
-                resolve "babel-preset-env"
+                resolve "@babel/preset-env"
                 targets: node: "8.10"
               ]]
-              plugins: [
-                resolve "babel-plugin-transform-async-generator-functions"
-              ]
+              # plugins: [
+              #   resolve "@babel/plugin-transform-async-to-generator"
+              # ]
 
           task "npm:compile:source",
             compile
