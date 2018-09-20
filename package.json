@@ -1,6 +1,6 @@
 {
   "name": "panda-builder",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm",
@@ -14,8 +14,7 @@
   },
   "main": "build/npm/src/index.js",
   "scripts": {
-    "test": "gulp npm:test",
-    "postinstall": "panda-builder-update"
+    "test": "gulp npm:test"
   },
   "repository": {
     "type": "git",
