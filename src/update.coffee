@@ -5,7 +5,7 @@ require "colors"
 do ->
 
   commands = {
-    install: -> run "npm i -D panda-builder @babel/core @babel/preset-env"
+    install: -> run "npm i -D @babel/core @babel/preset-env"
     rebuild: -> run "npm test"
     bump: -> run "npm version patch --no-git-tag-version"
     commit: -> run "git commit package.json package-lock.json
