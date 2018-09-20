@@ -1,6 +1,6 @@
 {
   "name": "panda-builder",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm",
@@ -29,7 +29,7 @@
   "homepage": "https://github.com/pandastrike/panda-builder#readme",
   "dependencies": {
     "@babel/core": "^7.1.0",
-    "coffeescript": "github:jashkenas/coffeescript#master",
+    "coffeescript": "^2.3.2",
     "colors": "^1.2.1",
     "del": "^3.0.0",
     "gulp": "github:gulpjs/gulp#4.0"
