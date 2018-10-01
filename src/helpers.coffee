@@ -1,6 +1,5 @@
 thru = require "through2"
 
-
 tee = (f) ->
   thru.obj (file, encoding, callback) ->
     await f file, encoding
@@ -14,8 +13,15 @@ content = (f) ->
     file.contents = Buffer.from await f (file.contents.toString encoding), file
 
 resolve = (path) ->
-  require.resolve path, paths: [ __dirname ]
+  require.resolve path, paths: [ process.cwd() ]
 
 merge = (args...) -> Object.assign {}, args...
 
-module.exports = {tee, pluck, content, resolve, merge}
+json = (object) -> JSON.stringify object, null, 2
+
+replace = (changes, string) ->
+  for change in changes
+    string = string.replace change...
+  string
+
+module.exports = {tee, pluck, content, resolve, merge, json, replace}
