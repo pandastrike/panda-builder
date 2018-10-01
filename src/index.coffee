@@ -1,6 +1,7 @@
+fs = require "fs"
 del = require "del"
 {coffee, extension} = require "./plugins"
-{resolve} = require "./helpers"
+{resolve, json, replace} = require "./helpers"
 {print, run} = require "./run"
 
 module.exports = (gulp) ->
@@ -9,7 +10,6 @@ module.exports = (gulp) ->
 
   # package.json object
   module = do ->
-    fs = require "fs"
     JSON.parse fs.readFileSync "package.json"
 
   # Compile helper, taking target configuration
@@ -40,9 +40,6 @@ module.exports = (gulp) ->
                 resolve "@babel/preset-env"
                 targets: node: "8.10"
               ]]
-              # plugins: [
-              #   resolve "@babel/plugin-transform-async-to-generator"
-              # ]
 
           task "npm:compile:source",
             compile
@@ -65,24 +62,52 @@ module.exports = (gulp) ->
 
         task "npm:test", series "npm:build", "npm:run:tests"
 
-        task "npm:publish",
-          series (-> print await run "npm publish")
+        task "npm:publish", -> print await run "npm publish"
 
-      esm: ->
+      web: ->
 
-        task "esm:build", ->
+        task "web:clean", -> del "build/web"
 
-        task "esm:test", ->
+        do ->
+          # get all the latest
+          settings =
+            transpile:
+              presets: [[
+                resolve "@babel/preset-env"
+                targets: "last 2 chrome versions"
+                modules: false
+              ]]
 
-        task "esm:publish", ->
+          task "web:compile:source",
+            compile
+              source: "src/**/*.coffee"
+              target: "build/web/src"
+              settings: settings
 
-      www: ->
+          task "web:compile:tests",
+            compile
+              source: "test/**/*.coffee"
+              target: "build/web/test"
+              settings: settings
 
-        task "www:build", ->
+        task "web:build",
+          series "web:clean",
+            parallel "web:compile:source", "web:compile:tests"
 
-        task "www:test", ->
+        task "web:run:tests", ->
+          # TODO: probably should run in headless browser
+          print await run "node build/web/test/index.js"
 
-        task "www:publish", ->
+        task "web:test", series "web:build", "web:run:tests"
+
+        task "web:publish", ->
+          fs.writeFileSync "build/web/package.json",
+            (replace [
+              [ module.name, module.name + "-esm" ]
+              [ "build/npm", "." ]
+            ], (json module))
+          print await run "cd build/web && npm publish"
+
 
   # Tag a release
   task "git:tag", ->
