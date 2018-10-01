@@ -15,11 +15,6 @@ coffee = (settings) ->
         bare: true
         inlineMap: true
         filename: file.relative
-        transpile: do ->
-          # we don't require the preset
-          # if you're not actually using it
-          if !settings.transpile?
-            presets: [[ resolve "@babel/preset-stage-3" ]]
 
       coffeescript.compile code, merge defaults, settings
 
