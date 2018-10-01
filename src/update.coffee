@@ -6,7 +6,8 @@ do ->
 
   commands = {
     install: -> run "npm rm -D babel-core babel-preset-env &&
-      npm i -D @babel/core @babel/preset-env"
+      npm i -D @babel/core @babel/preset-env &&
+      npm up amen"
     rebuild: -> run "npm test"
     bump: -> run "npm version patch --no-git-tag-version"
     commit: -> run "git commit package.json package-lock.json
