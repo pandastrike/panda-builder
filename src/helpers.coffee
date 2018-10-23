@@ -1,21 +1,9 @@
-thru = require "through2"
+import fs from "fs"
 
-tee = (f) ->
-  thru.obj (file, encoding, callback) ->
-    await f file, encoding
-    callback null, file
-
-pluck = (key, f) ->
-  tee (file) -> f file[key]
-
-content = (f) ->
-  tee (file, encoding) ->
-    file.contents = Buffer.from await f (file.contents.toString encoding), file
+module = JSON.parse fs.readFileSync "package.json"
 
 resolve = (path) ->
   require.resolve path, paths: [ process.cwd() ]
-
-merge = (args...) -> Object.assign {}, args...
 
 json = (object) -> JSON.stringify object, null, 2
 
@@ -24,4 +12,5 @@ replace = (changes, string) ->
     string = string.replace change...
   string
 
-module.exports = {tee, pluck, content, resolve, merge, json, replace}
+
+export {module, resolve, json, replace, pug, stylus, coffee, extension}

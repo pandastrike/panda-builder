@@ -17,4 +17,4 @@ print = ([stdout, stderr]) ->
 log = (message) -> console.error message
 
 
-module.exports = {run, print, log}
+export {run, print, log}

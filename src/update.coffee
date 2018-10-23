@@ -1,6 +1,6 @@
-{resolve} = require "path"
-require "colors"
-{run, print, log} = require "./run"
+import {resolve} from "path"
+import {run, print, log} from "./run"
+import "colors"
 
 do ->
 

@@ -1,7 +1,7 @@
-{resolve} = require "path"
-{readFileSync, writeFileSync} = require "fs"
-require "colors"
-{run, print, log} = require "./run"
+import {resolve} from "path"
+import {readFileSync, writeFileSync} from "fs"
+import {run, print, log} from "./run"
+import "colors"
 
 do ->
 
@@ -32,14 +32,12 @@ do ->
     await run command
 
   log messages.package
+
   do ->
     pkg = JSON.parse readFileSync "package.json", "utf8"
     pkg.main = "build/npm/src/index.js"
     pkg.license = "MIT"
     pkg.scripts.test = "gulp npm:test"
     writeFileSync "package.json", JSON.stringify pkg, null, 2
-
-
-
 
   log messages.finish

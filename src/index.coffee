@@ -1,25 +1,30 @@
-fs = require "fs"
-del = require "del"
-{coffee, extension} = require "./plugins"
-{resolve, json, replace} = require "./helpers"
-{print, run} = require "./run"
+import {start, go, glob, map, wait, tee} from "panda-river"
+import {module, resolve, json, replace} from "./helpers"
+import {print, run} from "./run"
 
-module.exports = (gulp) ->
+parallel = (tasks...) -> -> Promise.all (run _t for _t in tasks)
+series = (tasks...) -> -> await run _t for _t in tasks
 
-  {task, series, parallel, src, dest} = gulp
+rmr = (path) ->
+  if await isDirectory path
+    await start map rm, await lsr target
+    await rmDir target
 
-  # package.json object
-  module = do ->
-    JSON.parse fs.readFileSync "package.json"
+export (p9k) ->
+
+  {define, run, context, write} = p9k
 
   # Compile helper, taking target configuration
   # (target in configuration refers to output path)
   compile = ({source, target, settings}) ->
     ->
-      src source
-      .pipe coffee settings
-      .pipe extension ".js"
-      .pipe dest target
+      go [
+        glob source, process.cwd()
+        map context
+        map coffee settings
+        map extension ".js"
+        wait tee write directories.target
+      ]
 
   targets =
 
@@ -29,7 +34,7 @@ module.exports = (gulp) ->
 
       npm: ->
 
-        task "npm:clean", -> del "build/npm"
+        task "npm:clean", -> rmr resolve directories.build, "npm"
 
         do ->
 
@@ -44,7 +49,7 @@ module.exports = (gulp) ->
           task "npm:compile:source",
             compile
               source: "src/**/*.coffee"
-              target: "build/npm/src"
+              target: "build/npm"
               settings: settings
 
           task "npm:compile:tests",
@@ -66,7 +71,7 @@ module.exports = (gulp) ->
 
       web: ->
 
-        task "web:clean", -> del "build/web"
+        task "web:clean", -> rmr "build/web"
 
         do ->
           # get all the latest
@@ -81,7 +86,7 @@ module.exports = (gulp) ->
           task "web:compile:source",
             compile
               source: "src/**/*.coffee"
-              target: "build/web/src"
+              target: "build/web"
               settings: settings
 
           task "web:compile:tests",
@@ -115,7 +120,7 @@ module.exports = (gulp) ->
     await run "git tag -am #{version} #{version}"
     await run "git push --tags"
 
-  task "clean", -> del "build"
+  task "clean", -> rmr "build"
 
   do ->
 
