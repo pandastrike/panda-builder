@@ -1,6 +1,6 @@
 {
   "name": "panda-builder",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm",
