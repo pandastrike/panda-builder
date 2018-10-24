@@ -1,5 +1,5 @@
 # Helpers to run external programs
-run = do ->
+sh = do ->
   {exec} = require('child_process')
   (command) ->
     new Promise (yay, nay) ->
@@ -17,4 +17,4 @@ print = ([stdout, stderr]) ->
 log = (message) -> console.error message
 
 
-export {run, print, log}
+export {sh, print, log}

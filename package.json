@@ -1,6 +1,6 @@
 {
   "name": "panda-builder",
-  "version": "2.4.1",
+  "version": "3.0.0",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm",
@@ -8,10 +8,7 @@
     "bin/update",
     "template"
   ],
-  "bin": {
-    "panda-builder-init": "./bin/init",
-    "panda-builder-update": "./bin/update"
-  },
+  "bin": {},
   "main": "build/npm/src/index.js",
   "scripts": {
     "test": "gulp npm:test"
@@ -39,6 +36,8 @@
     "stylus": "^0.54.5"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.1.0"
+    "@babel/preset-env": "^7.1.0",
+    "panda-builder": "^2.4.1",
+    "gulp": "github:gulpjs/gulp#v4.0.0-alpha.3"
   }
 }

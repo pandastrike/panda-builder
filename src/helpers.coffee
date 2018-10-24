@@ -13,4 +13,4 @@ replace = (changes, string) ->
   string
 
 
-export {module, resolve, json, replace, pug, stylus, coffee, extension}
+export {module, resolve, json, replace}

@@ -1,18 +1,24 @@
-import {start, go, glob, map, wait, tee} from "panda-river"
+import {start, go, map, wait, tee} from "panda-river"
+import {glob, isDirectory, isFile, ls, rm, rmDir} from "panda-quill"
 import {module, resolve, json, replace} from "./helpers"
-import {print, run} from "./run"
+import {coffee, extension} from "./plugins"
+import {print, sh} from "./sh"
 
-parallel = (tasks...) -> -> Promise.all (run _t for _t in tasks)
-series = (tasks...) -> -> await run _t for _t in tasks
 
 rmr = (path) ->
   if await isDirectory path
-    await start map rm, await lsr target
-    await rmDir target
+    paths = await ls path
+    (await rmr _path) for _path in paths
+    rmDir path
+  else if isFile path
+    rm path
 
-export (p9k) ->
+tools = (p9k) ->
 
-  {define, run, context, write} = p9k
+  {define, run, create, write} = p9k
+  task = define
+  parallel = (tasks...) -> -> Promise.all (run _t for _t in tasks)
+  series = (tasks...) -> -> await run _t for _t in tasks
 
   # Compile helper, taking target configuration
   # (target in configuration refers to output path)
@@ -20,10 +26,10 @@ export (p9k) ->
     ->
       go [
         glob source, process.cwd()
-        map context
-        map coffee settings
+        map create process.cwd()
+        wait map coffee settings
         map extension ".js"
-        wait tee write directories.target
+        wait map write target
       ]
 
   targets =
@@ -34,9 +40,9 @@ export (p9k) ->
 
       npm: ->
 
-        task "npm:clean", -> rmr resolve directories.build, "npm"
+        task "npm:clean", -> rmr "build/npm"
 
-        do ->
+        do (settings = undefined) ->
 
           # override defaults to support AWS Lambda
           settings =
@@ -55,25 +61,26 @@ export (p9k) ->
           task "npm:compile:tests",
             compile
               source: "test/**/*.coffee"
-              target: "build/npm/test"
+              target: "build/npm"
               settings: settings
 
-        task "npm:build",
-          series "npm:clean",
-            parallel "npm:compile:source", "npm:compile:tests"
+        task "npm:build", ->
+          await run "npm:clean"
+          do parallel "npm:compile:source", "npm:compile:tests"
 
         task "npm:run:tests", ->
-          print await run "node build/npm/test/index.js"
+          print await sh "node build/npm/test/index.js"
 
         task "npm:test", series "npm:build", "npm:run:tests"
 
-        task "npm:publish", -> print await run "npm publish"
+        task "npm:publish", -> print await sh "npm publish"
 
       web: ->
 
         task "web:clean", -> rmr "build/web"
 
-        do ->
+        do (settings = undefined) ->
+
           # get all the latest
           settings =
             transpile:
@@ -92,16 +99,16 @@ export (p9k) ->
           task "web:compile:tests",
             compile
               source: "test/**/*.coffee"
-              target: "build/web/test"
+              target: "build/web"
               settings: settings
 
-        task "web:build",
-          series "web:clean",
-            parallel "web:compile:source", "web:compile:tests"
+        task "web:build", ->
+          await run "web:clean"
+          do parallel "web:compile:source", "web:compile:tests"
 
         task "web:run:tests", ->
           # TODO: probably should run in headless browser
-          print await run "node build/web/test/index.js"
+          print await sh "node build/web/test/index.js"
 
         task "web:test", series "web:build", "web:run:tests"
 
@@ -111,14 +118,14 @@ export (p9k) ->
               [ module.name, module.name + "-esm" ]
               [ "build/npm", "." ]
             ], (json module))
-          print await run "cd build/web && npm publish"
+          print await sh "cd build/web && npm publish"
 
 
   # Tag a release
   task "git:tag", ->
     {version} = module
-    await run "git tag -am #{version} #{version}"
-    await run "git push --tags"
+    await sh "git tag -am #{version} #{version}"
+    await sh "git push --tags"
 
   task "clean", -> rmr "build"
 
@@ -149,3 +156,5 @@ export (p9k) ->
       definition()
 
   {target}
+
+export {tools}

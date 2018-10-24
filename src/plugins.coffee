@@ -1,4 +1,5 @@
 import {tee} from "panda-garden"
+import {merge} from "panda-parchment"
 import {read} from "panda-quill"
 import _pug from "pug"
 import _coffee from "coffeescript"
@@ -18,17 +19,18 @@ stylus = ({source, target}) ->
     _stylus.render source.content, filename: source.path,
       (error, css) -> unless error? then resolve css else reject error
 
-coffee = do (
+coffee = do (defaults = undefined) ->
+
   defaults =
     bare: true
     inlineMap: true
-) ->
+
   (settings) ->
     tee ({source, target}) ->
       source.content ?= await read source.path
-      target.content = coffeescript.compile source.content,
-        merge defaults, settings, {filename: file.relative}
+      target.content = _coffee.compile source.content,
+        merge defaults, settings, {filename: source.path}
 
-extension = (extension) -> ({target}) -> target.extension = extension
+extension = (extension) -> tee ({target}) -> target.extension = extension
 
 export {pug, stylus, coffee, extension}
