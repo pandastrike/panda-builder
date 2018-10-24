@@ -9,7 +9,7 @@
     "template"
   ],
   "bin": {},
-  "main": "build/web/src/index.js",
+  "main": "build/npm/src/index.js",
   "scripts": {
     "test": "p9k npm:test"
   },
@@ -32,9 +32,9 @@
     "panda-quill": "^3.1.1",
     "panda-river": "^4.3.0",
     "pug": "^2.0.3",
-    "stylus": "^0.54.5",
+    "stylus": "^0.54.5"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.1.0",
+    "@babel/preset-env": "^7.1.0"
   }
 }
