@@ -1,10 +1,17 @@
 import {start, go, map, wait, tee} from "panda-river"
-import {glob, isDirectory, isFile, ls, rm, rmDir} from "panda-quill"
+import {glob, exists, isDirectory, isFile, ls, rm, rmDir} from "panda-quill"
 import {module, resolve, json, replace} from "./helpers"
 import {coffee, extension} from "./plugins"
 import {print, sh} from "./sh"
 
+# TODO: move to parchment or promise-helpers?
+all = (px) -> Promise.all px
 
+# TODO: move to river?
+fan = (f) -> (producer) ->
+  yield value for value from (await all (f value for value from producer))
+
+# TODO: move to quill
 rmr = (path) ->
   if await isDirectory path
     paths = await ls path
@@ -17,17 +24,21 @@ tools = (p9k) ->
 
   {define, run, create, write} = p9k
   task = define
+
+  # TODO: add 'background tasks' to p9k
   parallel = (tasks...) -> -> Promise.all (run _t for _t in tasks)
   series = (tasks...) -> -> await run _t for _t in tasks
+
+  cwd = process.cwd()
 
   # Compile helper, taking target configuration
   # (target in configuration refers to output path)
   compile = ({source, target, settings}) ->
     ->
       go [
-        glob source, process.cwd()
-        map create process.cwd()
-        wait map coffee settings
+        glob source, cwd
+        map create cwd
+        fan coffee settings
         map extension ".js"
         wait map write target
       ]
@@ -77,7 +88,7 @@ tools = (p9k) ->
 
       web: ->
 
-        task "web:clean", -> rmr "build/web"
+        task "web:clean", -> # rmr "build/web"
 
         do (settings = undefined) ->
 
