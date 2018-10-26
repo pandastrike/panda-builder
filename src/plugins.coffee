@@ -27,7 +27,6 @@ coffee = do (defaults = undefined) ->
 
   (settings) ->
     tee ({source, target}) ->
-      source.content ?= await read source.path
       target.content = _coffee.compile source.content,
         merge defaults, settings, {filename: source.path}
 

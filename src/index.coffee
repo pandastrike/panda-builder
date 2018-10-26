@@ -9,25 +9,25 @@ all = (px) -> Promise.all px
 
 # TODO: move to river?
 fan = (f) -> (producer) ->
-  yield value for value from (await all (f value for value from producer))
+  yield value for value from (await all (f value for await value from producer))
 
 # TODO: move to quill
 rmr = (path) ->
-  if await isDirectory path
+  if (await isDirectory path)
     paths = await ls path
     (await rmr _path) for _path in paths
-    rmDir path
-  else if isFile path
-    rm path
+    await rmDir path
+  else if (await isFile path)
+    await rm path
 
 tools = (p9k) ->
 
-  {define, run, create, write} = p9k
+  {define, run, create, read, write} = p9k
   task = define
 
   # TODO: add 'background tasks' to p9k
-  parallel = (tasks...) -> -> Promise.all (run _t for _t in tasks)
-  series = (tasks...) -> -> await run _t for _t in tasks
+  parallel = (tasks) -> -> Promise.all (run _t for _t in tasks)
+  series = (tasks) -> -> await run _t for _t in tasks
 
   cwd = process.cwd()
 
@@ -38,6 +38,7 @@ tools = (p9k) ->
       go [
         glob source, cwd
         map create cwd
+        wait map read
         fan coffee settings
         map extension ".js"
         wait map write target
@@ -77,18 +78,18 @@ tools = (p9k) ->
 
         task "npm:build", ->
           await run "npm:clean"
-          do parallel "npm:compile:source", "npm:compile:tests"
+          do parallel [ "npm:compile:source", "npm:compile:tests" ]
 
         task "npm:run:tests", ->
           print await sh "node build/npm/test/index.js"
 
-        task "npm:test", series "npm:build", "npm:run:tests"
+        task "npm:test", series [ "npm:build", "npm:run:tests" ]
 
         task "npm:publish", -> print await sh "npm publish"
 
       web: ->
 
-        task "web:clean", -> # rmr "build/web"
+        task "web:clean", -> rmr "build/web"
 
         do (settings = undefined) ->
 
@@ -115,13 +116,13 @@ tools = (p9k) ->
 
         task "web:build", ->
           await run "web:clean"
-          do parallel "web:compile:source", "web:compile:tests"
+          do parallel [ "web:compile:source", "web:compile:tests" ]
 
         task "web:run:tests", ->
           # TODO: probably should run in headless browser
           print await sh "node build/web/test/index.js"
 
-        task "web:test", series "web:build", "web:run:tests"
+        task "web:test", series [ "web:build", "web:run:tests" ]
 
         task "web:publish", ->
           fs.writeFileSync "build/web/package.json",

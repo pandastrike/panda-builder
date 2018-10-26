@@ -1,7 +1,4 @@
-# import tools from "./src"
-# import p9k from "panda-9000"
-
-{tools} = require "../build/npm/src"
+{tools} = require "panda-builder"
 p9k = require "panda-9000"
 
 {target} = tools p9k
