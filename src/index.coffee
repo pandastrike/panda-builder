@@ -1,5 +1,5 @@
 import {start, go, map, wait, tee} from "panda-river"
-import {glob, exists, isDirectory, isFile, ls, rm, rmDir} from "panda-quill"
+import {glob, exists, isDirectory, isFile, ls, rm, rmr} from "panda-quill"
 import {module, resolve, json, replace} from "./helpers"
 import {coffee, extension} from "./plugins"
 import {print, sh} from "./sh"
@@ -11,14 +11,6 @@ all = (px) -> Promise.all px
 fan = (f) -> (producer) ->
   yield value for value from (await all (f value for await value from producer))
 
-# TODO: move to quill
-rmr = (path) ->
-  if (await isDirectory path)
-    paths = await ls path
-    (await rmr _path) for _path in paths
-    await rmDir path
-  else if (await isFile path)
-    await rm path
 
 tools = (p9k) ->
 
