@@ -1,25 +1,14 @@
-import {start, go, map, wait, tee} from "panda-river"
-import {glob, exists, isDirectory, isFile, ls, rm, rmr} from "panda-quill"
+import {start, go, map, wait, tee, pool} from "panda-river"
+import {all} from "panda-parchment"
+import {write as _write, exists,
+  isDirectory, isFile, ls, rm, rmr} from "panda-quill"
 import {module, resolve, json, replace} from "./helpers"
-import {coffee, extension} from "./plugins"
+import {coffee} from "./plugins"
 import {print, sh} from "./sh"
-
-# TODO: move to parchment or promise-helpers?
-all = (px) -> Promise.all px
-
-# TODO: move to river?
-fan = (f) -> (producer) ->
-  yield value for value from (await all (f value for await value from producer))
-
 
 tools = (p9k) ->
 
-  {define, run, create, read, write} = p9k
-  task = define
-
-  # TODO: add 'background tasks' to p9k
-  parallel = (tasks) -> -> Promise.all (run _t for _t in tasks)
-  series = (tasks) -> -> await run _t for _t in tasks
+  {define, run, glob, read, write, extension} = p9k
 
   cwd = process.cwd()
 
@@ -29,9 +18,8 @@ tools = (p9k) ->
     ->
       go [
         glob source, cwd
-        map create cwd
         wait map read
-        fan coffee settings
+        map coffee settings
         map extension ".js"
         wait map write target
       ]
@@ -44,80 +32,72 @@ tools = (p9k) ->
 
       npm: ->
 
-        task "npm:clean", -> rmr "build/npm"
+        define "npm:clean", -> rmr "build/npm"
 
-        do (settings = undefined) ->
+        # override defaults to support AWS Lambda
+        settings =
+          transpile:
+            presets: [[
+              resolve "@babel/preset-env"
+              targets: node: "8.10"
+            ]]
 
-          # override defaults to support AWS Lambda
-          settings =
-            transpile:
-              presets: [[
-                resolve "@babel/preset-env"
-                targets: node: "8.10"
-              ]]
+        define "npm:compile:source",
+          compile
+            source: "src/**/*.coffee"
+            target: "build/npm"
+            settings: settings
 
-          task "npm:compile:source",
-            compile
-              source: "src/**/*.coffee"
-              target: "build/npm"
-              settings: settings
+        define "npm:compile:tests",
+          compile
+            source: "test/**/*.coffee"
+            target: "build/npm"
+            settings: settings
 
-          task "npm:compile:tests",
-            compile
-              source: "test/**/*.coffee"
-              target: "build/npm"
-              settings: settings
+        define "npm:build", "npm:clean npm:compile:source& npm:compile:tests&"
 
-        task "npm:build", ->
-          await run "npm:clean"
-          do parallel [ "npm:compile:source", "npm:compile:tests" ]
-
-        task "npm:run:tests", ->
+        define "npm:run:tests", ->
           print await sh "node build/npm/test/index.js"
 
-        task "npm:test", series [ "npm:build", "npm:run:tests" ]
+        define "npm:test", "npm:build npm:run:tests"
 
-        task "npm:publish", -> print await sh "npm publish"
+        define "npm:publish", -> print await sh "npm publish"
 
       web: ->
 
-        task "web:clean", -> rmr "build/web"
+        define "web:clean", -> rmr "build/web"
 
-        do (settings = undefined) ->
+        # get all the latest
+        settings =
+          transpile:
+            presets: [[
+              resolve "@babel/preset-env"
+              targets: "last 2 chrome versions"
+              modules: false
+            ]]
 
-          # get all the latest
-          settings =
-            transpile:
-              presets: [[
-                resolve "@babel/preset-env"
-                targets: "last 2 chrome versions"
-                modules: false
-              ]]
+        define "web:compile:source",
+          compile
+            source: "src/**/*.coffee"
+            target: "build/web"
+            settings: settings
 
-          task "web:compile:source",
-            compile
-              source: "src/**/*.coffee"
-              target: "build/web"
-              settings: settings
+        define "web:compile:tests",
+          compile
+            source: "test/**/*.coffee"
+            target: "build/web"
+            settings: settings
 
-          task "web:compile:tests",
-            compile
-              source: "test/**/*.coffee"
-              target: "build/web"
-              settings: settings
+        define "web:build", "web:clean web:compile:source& web:compile:tests&"
 
-        task "web:build", ->
-          await run "web:clean"
-          do parallel [ "web:compile:source", "web:compile:tests" ]
-
-        task "web:run:tests", ->
+        define "web:run:tests", ->
           # TODO: probably should run in headless browser
           print await sh "node build/web/test/index.js"
 
-        task "web:test", series [ "web:build", "web:run:tests" ]
+        define "web:test", "web:build web:run:tests"
 
-        task "web:publish", ->
-          fs.writeFileSync "build/web/package.json",
+        define "web:publish", ->
+          _write "build/web/package.json",
             (replace [
               [ module.name, module.name + "-esm" ]
               [ "build/npm", "." ]
@@ -126,28 +106,23 @@ tools = (p9k) ->
 
 
   # Tag a release
-  task "git:tag", ->
+  define "git:tag", ->
     {version} = module
     await sh "git tag -am #{version} #{version}"
     await sh "git push --tags"
 
-  task "clean", -> rmr "build"
+  define "clean", -> rmr "build"
 
-  do ->
+  # define dyamically because active targets isn't yet defined
 
-    tasks = (task) ->
-      "#{name}:#{task}" for name in targets.active
+  tasks = (task) ->
+    -> run "#{name}:#{task}" for name in targets.active
 
-    # each of these is defined dyamically in case
-    # active targets gets updated
-    task "build", ->
-      await do parallel tasks "build"
-
-    task "test", ->
-      await do parallel tasks "test"
-
-    task "publish", ->
-      await do parallel tasks "publish"
+  # define "build", tasks "build"
+  #
+  # define "test", tasks "test"
+  #
+  # define "publish", tasks "publish"
 
   # if name references a preset, run the preset with
   # the definition as an arg. otw, the arg is a fn

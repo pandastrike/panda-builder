@@ -1,6 +1,6 @@
 {
   "name": "panda-builder",
-  "version": "3.1.2",
+  "version": "3.2.1",
   "description": "Shared tooling for building fairmont packages",
   "files": [
     "build/npm"
@@ -22,17 +22,17 @@
   },
   "homepage": "https://github.com/pandastrike/panda-builder#readme",
   "dependencies": {
-    "@babel/core": "^7.1.5",
+    "@babel/core": "^7.1.6",
     "coffeescript": "^2.3.2",
-    "panda-9000": "^4.2.2",
+    "panda-9000": "^4.4.0",
     "panda-parchment": "^4.2.0",
     "panda-quill": "^3.4.3",
-    "panda-river": "^4.4.0",
+    "panda-river": "^4.4.1",
     "pug": "^2.0.3",
     "stylus": "^0.54.5"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.1.5",
-    "panda-builder": "^3.1.1"
+    "@babel/preset-env": "^7.1.6",
+    "panda-builder": "^3.2.0"
   }
 }
