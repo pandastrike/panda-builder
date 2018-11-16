@@ -118,11 +118,11 @@ tools = (p9k) ->
   tasks = (task) ->
     -> run "#{name}:#{task}" for name in targets.active
 
-  # define "build", tasks "build"
-  #
-  # define "test", tasks "test"
-  #
-  # define "publish", tasks "publish"
+  define "build", tasks "build"
+
+  define "test", tasks "test"
+
+  define "publish", tasks "publish"
 
   # if name references a preset, run the preset with
   # the definition as an arg. otw, the arg is a fn
