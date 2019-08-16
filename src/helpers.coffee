@@ -1,11 +1,10 @@
 import fs from "fs"
+import {fromJSON} from "panda-parchment"
 
-module = JSON.parse fs.readFileSync "package.json"
+module = fromJSON fs.readFileSync "package.json"
 
 resolve = (path) ->
   require.resolve path, paths: [ process.cwd() ]
-
-json = (object) -> JSON.stringify object, null, 2
 
 replace = (changes, string) ->
   for change in changes
@@ -13,4 +12,4 @@ replace = (changes, string) ->
   string
 
 
-export {module, resolve, json, replace}
+export {module, resolve, replace}

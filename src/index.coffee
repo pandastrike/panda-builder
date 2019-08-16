@@ -1,10 +1,9 @@
-import {start, go, map, wait, tee, pool} from "panda-river"
-import {all} from "panda-parchment"
-import {write as _write, exists,
-  isDirectory, isFile, ls, rm, rmr} from "panda-quill"
-import {module, resolve, json, replace} from "./helpers"
+import {go, map, wait} from "panda-river"
+import {toJSON} from "panda-parchment"
+import {write as _write, rmr} from "panda-quill"
+import {module, resolve, replace} from "./helpers"
 import {coffee} from "./plugins"
-import {print, sh} from "./sh"
+import {shell} from "./shell"
 
 tools = (p9k) ->
 
@@ -39,7 +38,7 @@ tools = (p9k) ->
           transpile:
             presets: [[
               resolve "@babel/preset-env"
-              targets: node: "8.10"
+              targets: node: "12.8"
             ]]
 
         define "npm:compile:source",
@@ -57,11 +56,11 @@ tools = (p9k) ->
         define "npm:build", "npm:clean npm:compile:source& npm:compile:tests&"
 
         define "npm:run:tests", ->
-          print await sh "node build/npm/test/index.js"
+          shell "node build/npm/test/index.js"
 
         define "npm:test", "npm:build npm:run:tests"
 
-        define "npm:publish", -> print await sh "npm publish"
+        define "npm:publish", -> shell "npm publish"
 
       web: ->
 
@@ -92,7 +91,7 @@ tools = (p9k) ->
 
         define "web:run:tests", ->
           # TODO: probably should run in headless browser
-          print await sh "node build/web/test/index.js"
+          shell "node build/web/test/index.js"
 
         define "web:test", "web:build web:run:tests"
 
@@ -101,8 +100,8 @@ tools = (p9k) ->
             (replace [
               [ module.name, module.name + "-esm" ]
               [ "build/npm", "." ]
-            ], (json module))
-          print await sh "cd build/web && npm publish"
+            ], (toJSON module, true))
+          shell "cd build/web && npm publish"
 
 
   # Tag a release
