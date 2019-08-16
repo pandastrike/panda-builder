@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.5.5",
-    "panda-builder": "4.0.0",
+    "panda-builder": "3.2.1",
     "panda-9000": "4.4.0"
   }
 }
