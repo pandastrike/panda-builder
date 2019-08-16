@@ -107,8 +107,8 @@ tools = (p9k) ->
   # Tag a release
   define "git:tag", ->
     {version} = module
-    await sh "git tag -am #{version} #{version}"
-    await sh "git push --tags"
+    await shell "git tag -am #{version} #{version}"
+    await shell "git push --tags"
 
   define "clean", -> rmr "build"
 
