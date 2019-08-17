@@ -96,7 +96,7 @@ tools = (p9k) ->
         define "web:test", "web:build web:run:tests"
 
         define "web:publish", ->
-          _write "build/web/package.json",
+          await _write "build/web/package.json",
             (replace [
               [ module.name, module.name + "-esm" ]
               [ "build/npm", "." ]
