@@ -101,8 +101,7 @@ tools = (p9k) ->
               [ module.name, module.name + "-esm" ]
               [ "build/npm", "." ]
             ], (toJSON module, true))
-          await shell "cd build/web"
-          await shell "npm publish"
+          await shell "npm publish", "build/web"
 
 
   # Tag a release
